@@ -8,7 +8,7 @@ We want architecture and sequence diagrams that agents create and keep current, 
 
 ## Decision
 
-Diagrams are ```` ```mermaid ```` blocks in `docs/diagrams/*.md`, logged in `docs/diagrams/CHANGELOG.md`. `scripts/check-diagrams.mjs` parses every Mermaid block with the `mermaid` package under jsdom, and checks that the diagrams name every workspace package and service and that diagram changes are logged. It runs in the edit hook, the Stop hook, pre-commit, `pnpm check`, and CI.
+Diagrams are ` ```mermaid ` blocks in `docs/diagrams/*.md`, logged in `docs/diagrams/CHANGELOG.md`. `scripts/check-diagrams.mjs` parses every Mermaid block with the `mermaid` package under jsdom, and checks that the diagrams name every workspace package and service and that diagram changes are logged. It runs in the edit hook, the Stop hook, pre-commit, `pnpm check`, and CI.
 
 ## Why
 

@@ -19,6 +19,5 @@ flowchart LR
 ```
 
 Rules the diagram reflects (from `AGENTS.md`):
-
 - `@app/contracts` is the only package other packages may import.
 - Services talk to each other over HTTP, never by importing each other. A service-to-service edge is labeled with its protocol.

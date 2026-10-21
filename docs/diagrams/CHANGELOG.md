@@ -4,5 +4,6 @@ Newest first. Add an entry whenever a diagram in this folder is added, changed, 
 
 ## 2026-10-21
 
+- Reformatted `architecture.md` with Biome 2.6's Markdown formatter. Whitespace only; the diagram is unchanged.
 - Added `architecture.md`: the workspace packages, the HTTP client, and the import from `@app/example` to `@app/contracts`. Why: the starter now requires an architecture diagram.
 - Added `greeting-sequence.md`: the greeting request, including the rejection of a malformed body (EX-3). Why: every service needs at least one sequence diagram.

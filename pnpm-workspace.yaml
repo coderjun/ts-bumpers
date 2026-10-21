@@ -2,4 +2,4 @@ packages:
   - packages/*
   - services/*
 ignoredBuiltDependencies:
-  - lefthook  # hooks are installed by the root "prepare" script instead
+  - lefthook # hooks are installed by the root "prepare" script instead
