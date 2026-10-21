@@ -39,7 +39,8 @@ Read this before changing anything. It applies to every coding agent and every p
 
 - On every file edit (Claude Code): Biome formats it and reports lint errors back.
 - On every Markdown edit (Claude Code): its Mermaid diagrams must parse.
-- Before an agent turn ends (Claude Code): the workspace must typecheck; a turn that edited files must end with an `Unrequested decisions:` section; a turn that changed source but no diagram must end with a `Diagrams:` line saying why; and the diagram check must pass.
+- When a prompt is sent (Claude Code): the working tree is snapshotted, so the end-of-turn check sees every file the turn changed, however it changed.
+- Before an agent turn ends (Claude Code): the workspace must typecheck; a turn that changed files must end with an `Unrequested decisions:` section; a turn that changed source but no diagram must end with a `Diagrams:` line saying why; every file that changed without an edit tool must be named, as changed by a command you ran or under `Out-of-band changes:` if you didn't change it; and the diagram check must pass. Files matching `.claude/turn-review-ignore` (e.g. `pnpm-lock.yaml`) are left out.
 - On commit: Biome, typecheck, the diagram check (a staged diagram change needs a changelog entry), and a gitleaks secret scan if gitleaks is installed.
 - On push: the tests.
 - In CI: Biome, typecheck, tests, the diagram check against the base branch, gitleaks, and, on pull requests, an `Unrequested decisions` section in the description.
