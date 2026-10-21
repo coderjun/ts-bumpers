@@ -4,6 +4,13 @@ A TypeScript starter for AI-agent development that keeps you out of trouble.
 
 Like the bumpers in a bowling lane, it keeps you and your agents out of the gutter without taking over the throw. The guardrails are deterministic and enforced, not advisory. Formatting, linting, types, tests, and secret scanning run as hooks and CI checks that block, so an agent (or a person) can't skip them by forgetting.
 
+## Get it
+
+- **Download a release:** the latest `bumpers-vX.Y.Z.zip` from [Releases](https://github.com/coderjun/ts-bumpers/releases/latest). It's a versioned snapshot with no git history, tested to pass the quick start below before it was published.
+- **Use the template:** click "Use this template" on [GitHub](https://github.com/coderjun/ts-bumpers) to create your own repository from the latest `main`.
+
+Then follow the [quick start](#quick-start).
+
 ## Guardrails
 
 | Guardrail                                                   | When it runs                                       | What it catches                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
@@ -33,7 +40,7 @@ New to TypeScript or to working with coding agents? Each step says what it does.
 3. **Install the project**:
 
    ```bash
-   git init          # skip if you cloned the repo
+   git init          # only for the zip; a template or clone is already a repo
    pnpm install      # dependencies, git hooks, and the turn history
    pnpm setup:tools  # offers to install gitleaks and the GitHub CLI
    pnpm check        # lint, typecheck, check diagrams, and test

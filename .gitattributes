@@ -1,0 +1,6 @@
+# Files left out of the starter zip and GitHub's "Source code" downloads. They're only for
+# publishing Bumpers itself. See RELEASING.md.
+.gitattributes export-ignore
+RELEASING.md export-ignore
+.github/workflows/release.yml export-ignore
+scripts/build-starter.ts export-ignore
