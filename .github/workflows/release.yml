@@ -1,0 +1,56 @@
+name: Release
+
+# Promote a version by hand: Actions tab > Release > Run workflow, or
+#   gh workflow run release.yml -f version=1.2.0
+# Checks main, builds the starter zip, tests it the way the README says to use it, then tags the
+# commit and publishes a GitHub Release with the zip. Nothing is tagged unless every step passes.
+# See RELEASING.md.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to release, as X.Y.Z (no leading v)"
+        required: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    # Only in the Bumpers repo itself: a project created from the template doesn't release Bumpers.
+    if: github.repository == 'coderjun/ts-bumpers'
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ inputs.version }}
+    steps:
+      - name: Release from main only
+        run: |
+          if [ "$GITHUB_REF" != "refs/heads/main" ]; then
+            echo "Releases come from main, not $GITHUB_REF. Pick main under 'Use workflow from'." >&2
+            exit 1
+          fi
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm check
+      - name: Build and smoke-test the starter zip
+        run: node scripts/build-starter.ts "$VERSION"
+      - name: Tag and publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "v$VERSION" "dist/bumpers-v$VERSION.zip" \
+            --target "$GITHUB_SHA" \
+            --title "Bumpers v$VERSION" \
+            --generate-notes
