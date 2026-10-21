@@ -1,6 +1,8 @@
-# ts-agent-starter
+# Bumpers
 
-A TypeScript starter for agent-assisted development where the guardrails are deterministic and enforced, not advisory. Formatting, linting, types, tests, and secret scanning run as hooks and CI checks that block, so an agent (or a person) can't skip them by forgetting.
+A TypeScript starter for AI-agent development that keeps you out of trouble.
+
+Like the bumpers in a bowling lane, it keeps you and your agents out of the gutter without taking over the throw. The guardrails are deterministic and enforced, not advisory. Formatting, linting, types, tests, and secret scanning run as hooks and CI checks that block, so an agent (or a person) can't skip them by forgetting.
 
 ## Guardrails
 
