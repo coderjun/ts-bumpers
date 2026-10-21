@@ -13,6 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
       - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v7
         with:
@@ -22,6 +24,21 @@ jobs:
       - run: pnpm exec biome ci .
       - run: pnpm typecheck
       - run: pnpm test
+      # Diagrams render, cover every package, and changed diagrams have a changelog entry.
+      - run: pnpm check:diagrams --base "origin/${{ github.base_ref || github.event.repository.default_branch }}"
+
+  pull-request-body:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      # Every pull request says which decisions it made that nobody asked for (or "none").
+      - env:
+          BODY: ${{ github.event.pull_request.body }}
+        run: |
+          if ! printf '%s' "$BODY" | grep -qi 'unrequested decisions'; then
+            echo "The pull request description needs an 'Unrequested decisions' section. See .github/pull_request_template.md." >&2
+            exit 1
+          fi
 
   secrets:
     runs-on: ubuntu-latest

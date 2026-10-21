@@ -9,6 +9,8 @@ pre-commit:
     typecheck:
       glob: "*.{ts,tsx}"
       run: pnpm typecheck
+    diagrams:
+      run: node scripts/check-diagrams.mjs --staged
     secrets:
       run: |
         if command -v gitleaks >/dev/null; then
