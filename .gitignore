@@ -1,0 +1,9 @@
+# Secrets and local settings
+.env
+.claude/settings.local.json
+# Node
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+.DS_Store

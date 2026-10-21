@@ -1,0 +1,15 @@
+{
+  "name": "@app/contracts",
+  "private": true,
+  "type": "module",
+  "description": "Typed contracts shared by every service",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p ."
+  },
+  "dependencies": {
+    "zod": "^4.6.5"
+  }
+}
