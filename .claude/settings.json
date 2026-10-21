@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/snapshot-on-prompt.mjs"
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/run.sh snapshot-on-prompt.ts"
           }
         ]
       }
@@ -16,7 +16,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/format-and-lint.sh"
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/run.sh format-and-lint.ts"
           }
         ]
       }
@@ -26,11 +26,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/typecheck-on-stop.sh"
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/run.sh typecheck-on-stop.ts"
           },
           {
             "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/review-turn-on-stop.mjs"
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/run.sh review-turn-on-stop.ts"
           }
         ]
       }

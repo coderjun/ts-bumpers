@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 // Diagram guardrail. Fails (exit 1) when:
 //   1. A ```mermaid block in any Markdown file doesn't parse, so it wouldn't render on GitHub or in an editor.
 //   2. A fence is spelled like mermaid but not exactly `mermaid`, so it would show as plain text.
@@ -8,10 +7,10 @@
 //      a diagram changed without CHANGELOG.md changing too.
 //
 // Usage:
-//   node scripts/check-diagrams.mjs                 all checks except change coupling
-//   node scripts/check-diagrams.mjs --staged        also: staged diagram changes need a changelog entry
-//   node scripts/check-diagrams.mjs --base <ref>    also: changes since merge-base with <ref> need one
-//   node scripts/check-diagrams.mjs --parse-only <file.md>...   only check that these files render
+//   node scripts/check-diagrams.ts                 all checks except change coupling
+//   node scripts/check-diagrams.ts --staged        also: staged diagram changes need a changelog entry
+//   node scripts/check-diagrams.ts --base <ref>    also: changes since merge-base with <ref> need one
+//   node scripts/check-diagrams.ts --parse-only <file.md>...   only check that these files render
 
 import { execFileSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
@@ -32,26 +31,32 @@ const fileArgs = args.filter(
   (a, i) => !a.startsWith("--") && (baseIndex === -1 || i !== baseIndex + 1),
 );
 
-const problems = [];
+const problems: string[] = [];
 
-function git(...gitArgs) {
+function git(...gitArgs: string[]): string[] {
   return execFileSync("git", gitArgs, { cwd: root, encoding: "utf8" }).split("\n").filter(Boolean);
 }
 
-function read(file) {
+function read(file: string): string {
   return readFileSync(join(root, file), "utf8");
 }
 
+interface Block {
+  lang: string;
+  line: number;
+  source: string;
+}
+
 /** Every fenced block in a Markdown file, with its info string and starting line. */
-function fencedBlocks(markdown) {
-  const blocks = [];
+function fencedBlocks(markdown: string): Block[] {
+  const blocks: Block[] = [];
   const lines = markdown.split("\n");
-  let open;
+  let open: { marker: string; lang: string; line: number; body: string[] } | undefined;
   lines.forEach((line, i) => {
     const fence = /^(\s*)(`{3,}|~{3,})\s*([^`\s]*)/.exec(line);
     if (!open && fence) {
-      open = { marker: fence[2], lang: fence[3] ?? "", line: i + 1, body: [] };
-    } else if (open && fence?.[2].startsWith(open.marker) && !fence[3]) {
+      open = { marker: fence[2] ?? "", lang: fence[3] ?? "", line: i + 1, body: [] };
+    } else if (open && fence?.[2]?.startsWith(open.marker) && !fence[3]) {
       blocks.push({ lang: open.lang, line: open.line, source: open.body.join("\n") });
       open = undefined;
     } else if (open) {
@@ -61,14 +66,14 @@ function fencedBlocks(markdown) {
   return blocks;
 }
 
-function mermaidBlocks(file) {
+function mermaidBlocks(file: string): Block[] {
   return fencedBlocks(read(file)).filter((b) => b.lang === "mermaid");
 }
 
 // 1 and 2: every mermaid block parses, and every mermaid-looking fence is spelled so it renders.
+// Mermaid expects a browser; jsdom supplies enough of one to parse.
 const { window } = new JSDOM("");
-globalThis.window = window;
-globalThis.document = window.document;
+Object.assign(globalThis, { window, document: window.document });
 const { default: mermaid } = await import("mermaid");
 mermaid.initialize({ startOnLoad: false, logLevel: "fatal" });
 
@@ -91,7 +96,7 @@ for (const file of markdownFiles) {
       await mermaid.parse(block.source);
     } catch (error) {
       problems.push(
-        `${file}:${block.line}: Mermaid diagram doesn't parse:\n${String(error.message ?? error)}`,
+        `${file}:${block.line}: Mermaid diagram doesn't parse:\n${error instanceof Error ? error.message : String(error)}`,
       );
     }
   }
@@ -102,12 +107,15 @@ if (!parseOnly) {
   const workspaceDirs = read("pnpm-workspace.yaml")
     .split("\n")
     .map((l) => /^\s*-\s*["']?([\w-]+)\/\*["']?\s*(#.*)?$/.exec(l)?.[1])
-    .filter(Boolean);
+    .filter((dir): dir is string => Boolean(dir));
   const packages = workspaceDirs.flatMap((dir) =>
     existsSync(join(root, dir))
       ? readdirSync(join(root, dir))
           .filter((name) => existsSync(join(root, dir, name, "package.json")))
-          .map((name) => ({ dir, name: JSON.parse(read(`${dir}/${name}/package.json`)).name }))
+          .map((name) => {
+            const pkg = JSON.parse(read(`${dir}/${name}/package.json`)) as { name: string };
+            return { dir, name: pkg.name };
+          })
       : [],
   );
 
@@ -158,11 +166,11 @@ if (!parseOnly) {
     }
   }
 
-  let changed;
+  let changed: string[] | undefined;
   if (staged) {
     changed = git("diff", "--cached", "--name-only");
   } else if (base) {
-    const mergeBase = git("merge-base", base, "HEAD")[0];
+    const mergeBase = git("merge-base", base, "HEAD")[0] ?? base;
     changed = [
       ...git("diff", "--name-only", mergeBase),
       ...git("ls-files", "--others", "--exclude-standard"),

@@ -7,3 +7,5 @@ dist/
 coverage/
 *.tsbuildinfo
 .DS_Store
+# Claude Code turn history (see .claude/hooks/turn-history.ts)
+.claude/turn-history/

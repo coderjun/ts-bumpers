@@ -3,14 +3,14 @@ pre-commit:
   parallel: true
   commands:
     format-and-lint:
-      glob: "*.{ts,tsx,js,mjs,json,jsonc}"
+      glob: "*.{ts,tsx,js,mjs,json,jsonc,md,yml,yaml}"
       run: pnpm exec biome check --write --no-errors-on-unmatched {staged_files}
       stage_fixed: true
     typecheck:
       glob: "*.{ts,tsx}"
       run: pnpm typecheck
     diagrams:
-      run: node scripts/check-diagrams.mjs --staged
+      run: node scripts/check-diagrams.ts --staged
     secrets:
       run: |
         if command -v gitleaks >/dev/null; then

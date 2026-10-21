@@ -1,0 +1,9 @@
+{
+  // Typechecks the tooling that runs on Node directly: Claude Code hooks and repo scripts. Node
+  // runs .ts files by stripping the types, so only syntax that can be erased is allowed.
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "erasableSyntaxOnly": true
+  },
+  "include": ["scripts", ".claude/hooks"]
+}
